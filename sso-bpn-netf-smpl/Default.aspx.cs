@@ -7,16 +7,23 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Security.Claims;
+using log4net;
+using log4net.Config;
 
 namespace sso_bpn_netf_smpl
 {
     public partial class _Default : Page
     {
+        private static readonly ILog log = LogManager.GetLogger(typeof(_Default));
+
         string authenticatedPage = System.Configuration.ConfigurationManager.AppSettings["authenticatedUri"];
 
         protected void Page_Load(object sender, EventArgs e)
         {
-			/*
+            XmlConfigurator.Configure(new System.IO.FileInfo(Server.MapPath("~") + "log4net.config"));
+            log.Info("Starting application...");
+
+            /*
             if (Request.IsAuthenticated)
             {
                 var userClaims = HttpContext.Current.User.Identity as System.Security.Claims.ClaimsIdentity;
@@ -25,7 +32,7 @@ namespace sso_bpn_netf_smpl
                 IEnumerable<Claim> principal = principalClaims.Claims;
             }
             */
-			if (Request.IsAuthenticated)
+            if (Request.IsAuthenticated)
             {
 				var identity = (ClaimsIdentity)HttpContext.Current.User.Identity;
 
@@ -57,6 +64,8 @@ namespace sso_bpn_netf_smpl
 
         protected void Button1_Click(object sender, EventArgs e)
         {
+            log.Info("Button1 is clicked...");
+
             if (!Request.IsAuthenticated)
             {
                 HttpContext.Current.GetOwinContext().Authentication.Challenge(
